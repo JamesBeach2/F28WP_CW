@@ -1,0 +1,24 @@
+{
+  "name": "f28wp_cw",
+  "version": "1.0.0",
+  "description": "File naming structure: lower case, spaces seperated with underscore e.g file_name.txt",
+  "main": "app.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^2.3.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/JamesBeach2/F28WP_CW.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JamesBeach2/F28WP_CW/issues"
+  },
+  "homepage": "https://github.com/JamesBeach2/F28WP_CW#readme"
+}

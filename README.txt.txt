@@ -1,0 +1,1 @@
+File naming structure: lower case, spaces seperated with underscore e.g file_name.txt
