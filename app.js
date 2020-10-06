@@ -11,5 +11,21 @@ app.get('/' , function(req,res) {
 
 app.use('/client' , express.static(__dirname + '/client'));
 
-// using port 2000
+// Broadcasting on port 2000 and displaying log 
 serv.listen(2000);
+console.log('server started')
+
+// creating a list of connections
+var socket_list = {};
+
+// displays an alert in the console when someone attempts to connect to the server
+var io = require('socket.io')(serv, {});
+io.sockets.on('connection', function(socket){
+	
+	//assigning each client a unique id
+	socket.id = Math.random();
+	socket_list[socket.id] = socket;
+	
+	console.log('Socket Connection')
+});
+
