@@ -1,6 +1,26 @@
+<canvas id = "ctx" height = "1000" width = "1000" style = "border: 2px solid black"></canvas>
+
 <!-- Importing socket.io scripts and initialising it  -->
 <script src="/socket.io/socket.io.js"></script>
 <script>
+	var ctx = document.getElementById('ctx').getContext('2d');
 	var socket = io(); 
-	
+
+	window.addEventListener('mousemove', function (e) {
+		var data = [];
+		data.push({
+			mouseX: e.x,
+			mouseY: e.y
+		});
+	});
+
+	socket.emit('update_mouse_pos', data);
+
+	socket.on('update_positions', function(data){
+		ctx.clearRect(0,0,1000,1000);
+		for(var i = 0; i < data.length; i++){
+			ctx.fillText('TEST', data[i].x, data[i].y);
+		}
+		
+	});
 </script>
