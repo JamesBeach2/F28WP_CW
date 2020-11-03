@@ -12,9 +12,10 @@
 			mouseX: e.x,
 			mouseY: e.y
 		});
+		socket.emit('update_mouse_pos', data);
 	});
 
-	socket.emit('update_mouse_pos', data);
+	
 
 	socket.on('update_positions', function(data){
 		ctx.clearRect(0,0,1000,1000);
