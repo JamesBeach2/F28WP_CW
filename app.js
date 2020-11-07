@@ -47,9 +47,6 @@ var Player = function(id){
 		
 	};
 
-	io.sockets.on('update_mouse_pos', function(data){
-		player.update_player(data.mouseX, data.mouseY);
-	});
 
 	return self;
 };
@@ -84,7 +81,10 @@ setInterval (function(){		// looping for every tick
 	
 	for(var i in player_list){
 		var player = player_list[i];
-		player.update_player;
+		io.sockets.on('update_mouse_pos', function(data){
+			player.update_player(data.mouseX, data.mouseY);
+		});
+
 		pack.push({
 			x:player.x,
 			y:player.y

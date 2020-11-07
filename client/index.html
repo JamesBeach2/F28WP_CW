@@ -6,14 +6,17 @@
 	var ctx = document.getElementById('ctx').getContext('2d');
 	var socket = io(); 
 
-	window.addEventListener('mousemove', function (e) {
-		var data = [];
-		data.push({
-			mouseX: e.x,
-			mouseY: e.y
+	setInterval (function(){
+		window.addEventListener('mousemove', function (e) {
+			var data = [];
+			data.push({
+				mouseX: e.x,
+				mouseY: e.y
+			});
+			socket.emit('update_mouse_pos', data);
 		});
-		socket.emit('update_mouse_pos', data);
-	});
+	}, 1000/30);
+
 
 	
 
