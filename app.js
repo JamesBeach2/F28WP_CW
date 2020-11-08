@@ -31,7 +31,7 @@ var Player = function(id){
 		mouseX: 0,
 		mouseY: 0,
 		velocity: 0,
-		maxspd:3,
+		maxspd:0.1,
 		accel:0.5,
 		//self.size = size;
 		//self.sprite = TODO;
@@ -45,8 +45,8 @@ var Player = function(id){
 		var distance = Math.sqrt(xDistance * xDistance + yDistance * yDistance);
 		
 		if (distance > 1) {
-			self.x += xDistance;
-			self.y += yDistance;
+			self.x += xDistance * self.maxspd;
+			self.y += yDistance * self.maxspd;
 		}
 	};
 
@@ -75,9 +75,9 @@ io.sockets.on('connection', function(socket){
 	
 	});
 
-	socket.on('update_mouse_pos', function(data){
-		player.mouseX = data.mouseX;
-		player.mouseY = data.mouseY;
+	socket.on('update_mouse_pos', function(x,y){
+		player.mouseX = x;
+		player.mouseY = y;
 	});
 });
 

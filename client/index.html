@@ -11,13 +11,9 @@
 	function mouse_emit(e) {
 		var x = e.clientX;
 		var y = e.clientY;
-		var data = [];
 		
-		data.push({
-			mouseX:x,
-			mouseY:y
-		});
-		socket.emit('update_mouse_pos', data);
+		socket.emit('update_mouse_pos', x, y);
+		console.log(x,y);
 	}
 
 
