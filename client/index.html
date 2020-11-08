@@ -6,8 +6,10 @@
 	var ctx = document.getElementById('ctx').getContext('2d');
 	var socket = io(); 
 
+	// when the mouse moves within the boundaries of the canvas, the mouse_emit function is called
 	document.getElementById("ctx").onmousemove = function(event) {mouse_emit(event)};
 
+	// mouse x and y values are stored and emitted back to the server
 	function mouse_emit(e) {
 		var x = e.clientX;
 		var y = e.clientY;
@@ -15,24 +17,13 @@
 		socket.emit('update_mouse_pos', x, y);
 	}
 
-
-/*
-	window.addEventListener('mousemove', function (e) {
-		var data = [];
-		data.push({
-			mouseX: e.clientX,
-			mouseY: e.clientY
-		});
-		socket.emit('update_mouse_pos', data);
-	});
-*/
-
-
-	
-
+	// listener for player updates
 	socket.on('update_positions', function(data){
+		// canvas is cleared before being redrawn with new positions
 		ctx.clearRect(0,0,1000,1000);
+		// looping for every player contained in the packet
 		for(var i = 0; i < data.length; i++){
+			// re-drawing each of the players in their new positions
 			ctx.fillText('TEST', data[i].x, data[i].y);
 		}
 		
