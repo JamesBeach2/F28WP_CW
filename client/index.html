@@ -6,16 +6,31 @@
 	var ctx = document.getElementById('ctx').getContext('2d');
 	var socket = io(); 
 
-	setInterval (function(){
-		window.addEventListener('mousemove', function (e) {
-			var data = [];
-			data.push({
-				mouseX: e.x,
-				mouseY: e.y
-			});
-			socket.emit('update_mouse_pos', data);
+	document.getElementById("ctx").onmousemove = function(event) {mouse_emit(event)};
+
+	function mouse_emit(e) {
+		var x = e.clientX;
+		var y = e.clientY;
+		var data = [];
+		
+		data.push({
+			mouseX:x,
+			mouseY:y
 		});
-	}, 1000/30);
+		socket.emit('update_mouse_pos', data);
+	}
+
+
+/*
+	window.addEventListener('mousemove', function (e) {
+		var data = [];
+		data.push({
+			mouseX: e.clientX,
+			mouseY: e.clientY
+		});
+		socket.emit('update_mouse_pos', data);
+	});
+*/
 
 
 	

@@ -28,6 +28,8 @@ var Player = function(id){
 		id: id,
 		x: Math.floor(Math.random() * 1000),
 		y: Math.floor(Math.random() * 1000),
+		mouseX: 0,
+		mouseY: 0,
 		velocity: 0,
 		maxspd:3,
 		accel:0.5,
@@ -36,15 +38,16 @@ var Player = function(id){
 		//self.sprite_colour = TODO;
 	};
 	
-	self.update_player = function(mouseX, mouseY){
-		var xDistance = mouseX - self.x;
-		var yDistance = mouseY - self.y;
+
+	self.update_player = function(){
+		var xDistance = self.mouseX - self.x;
+		var yDistance = self.mouseY - self.y;
 		var distance = Math.sqrt(xDistance * xDistance + yDistance * yDistance);
-		if (distance > 1) {
-			self.x += xDistance * easingAmount;
-			self.y += yDistance * easingAmount;
-		}
 		
+		if (distance > 1) {
+			self.x += xDistance;
+			self.y += yDistance;
+		}
 	};
 
 
@@ -71,6 +74,11 @@ io.sockets.on('connection', function(socket){
 		delete player_list[socket.id];
 	
 	});
+
+	socket.on('update_mouse_pos', function(data){
+		player.mouseX = data.mouseX;
+		player.mouseY = data.mouseY;
+	});
 });
 
 
@@ -81,10 +89,8 @@ setInterval (function(){		// looping for every tick
 	
 	for(var i in player_list){
 		var player = player_list[i];
-		io.sockets.on('update_mouse_pos', function(data){
-			player.update_player(data.mouseX, data.mouseY);
-		});
 
+		player.update_player();
 		pack.push({
 			x:player.x,
 			y:player.y
