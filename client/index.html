@@ -24,7 +24,8 @@
 		// looping for every player contained in the packet
 		for(var i = 0; i < data.length; i++){
 			// re-drawing each of the players in their new positions
-			ctx.fillText('TEST', data[i].x, data[i].y);
+			ctx.arc(data[i].x, data[i].y, 10 , 0, 2*Math.PI);
+			ctx.stroke();
 		}
 		
 	});
