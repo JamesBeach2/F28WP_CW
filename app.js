@@ -17,7 +17,20 @@ var io = require('socket.io')(serv, {});
 // creating a list of connections
 var socket_list = {};
 var player_list = {};
-
+var sprite_list = [
+	"img/playerSprite1.png",
+	"/client/img/playerSprite2.png",
+	"/client/img/playerSprite3.png",
+	"/client/img/playerSprite4.png",
+	"/client/img/playerSprite5.png",
+	"/client/img/playerSprite6.png",
+	"/client/img/playerSprite2_flip.png",
+	"/client/img/playerSprite3_flip.png",
+	"/client/img/playerSprite4_flip.png",
+	"/client/img/playerSprite5_flip.png",
+	"/client/img/playerSprite6_flip.png",
+	"/client/img/playerSprite1_flip.png",
+];
 
 
 
@@ -34,9 +47,9 @@ var Player = function(id){
 		//velocity: 0,
 		maxspd:0.1,
 		//accel:0.5,
-		//self.size = size;
-		//self.sprite = TODO;
-		//self.sprite_colour = TODO;
+		size: 0,
+		sprite_idx: Math.floor(Math.random() * 5),
+		sprite: sprite_list[0]
 	};
 	
 	// player movement function
@@ -112,7 +125,8 @@ setInterval (function(){		// looping for every tick
 		// new player positions are pushed into the packet
 		pack.push({
 			x:player.x,
-			y:player.y
+			y:player.y,
+			image:player.sprite
 		});
 	}
 	for(var i in socket_list){
