@@ -18,7 +18,7 @@ var io = require('socket.io')(serv, {});
 var socket_list = {};
 var player_list = {};
 var sprite_list = [
-	"img/playerSprite1.png",
+	"/client/img/playerSprite1.png",
 	"/client/img/playerSprite2.png",
 	"/client/img/playerSprite3.png",
 	"/client/img/playerSprite4.png",
@@ -45,11 +45,12 @@ var Player = function(id){
 		mouseX: 0,
 		mouseY: 0,
 		//velocity: 0,
-		maxspd:0.1,
+		maxspd:0.01,
 		//accel:0.5,
-		size: 0,
-		sprite_idx: Math.floor(Math.random() * 5),
-		sprite: sprite_list[0]
+		width: 80,
+		height: 44,
+		//sprite_idx: Math.floor(Math.random() * 5),
+		sprite: sprite_list[Math.floor(Math.random() * 5)]
 	};
 	
 	// player movement function
@@ -126,7 +127,9 @@ setInterval (function(){		// looping for every tick
 		pack.push({
 			x:player.x,
 			y:player.y,
-			image:player.sprite
+			player_sprite:player.sprite,
+			width: player.width,
+			height: player.height
 		});
 	}
 	for(var i in socket_list){
