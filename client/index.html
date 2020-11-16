@@ -8,8 +8,8 @@
 	ctx.fillRect(0,0,1000,1000); 
 	var socket = io(); 
 
-	var img = {};
-	img.player = new Image();
+	var img = [];
+	
 
 	// when the mouse moves within the boundaries of the canvas, the mouse_emit function is called
 	document.getElementById("ctx").onmousemove = function(event) {mouse_emit(event)};
@@ -30,12 +30,13 @@
 		// looping for every player contained in the packet
 		for(var i = 0; i < data.length; i++){
 			var player = data[i];
-			img.player.onload = function() {
-				// re-drawing each of the players in their new positions
-				ctx.drawImage(img.player,player.x,player.y, player.width, player.height);
-			};
-			img.player.src = player.player_sprite;
-		}
+			img[i] = new Image();
+			img[i].src = player.player_sprite;
+			// re-drawing each of the players in their new positions
+			ctx.drawImage(img[i],player.x,player.y, player.width, player.height);
+		};
 		
 	});
+	
+
 </script>
