@@ -74,6 +74,8 @@ var Player = function(id){
 			self.x += xDistance * self.maxspd;
 			self.y += yDistance * self.maxspd;
 		}
+
+		self.rotation = Math.atan2(xDistance, yDistance);
 	};
 
 
@@ -129,7 +131,8 @@ setInterval (function(){		// looping for every tick
 			y:player.y,
 			player_sprite:player.sprite,
 			width: player.width,
-			height: player.height
+			height: player.height,
+			angle: player.rotation
 		});
 	}
 	for(var i in socket_list){
