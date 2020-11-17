@@ -103,8 +103,8 @@ io.sockets.on('connection', function(socket){
 	//player is added to the player list
 	var player = Player(socket.id);
 	player_list[socket.id] = player;
-	player.sprite_idx = Math.floor(Math.random() * 5);
-	player.sprite_idx_flip = player.sprite_idx + 5;
+	player.sprite_idx = Math.floor(Math.random() * 6);
+	player.sprite_idx_flip = player.sprite_idx + 6;
 	player.sprite = sprite_list[player.sprite_idx];
 
 
