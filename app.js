@@ -24,12 +24,12 @@ var sprite_list = [
 	"/client/img/playerSprite4.png",
 	"/client/img/playerSprite5.png",
 	"/client/img/playerSprite6.png",
+	"/client/img/playerSprite1_flip.png",
 	"/client/img/playerSprite2_flip.png",
 	"/client/img/playerSprite3_flip.png",
 	"/client/img/playerSprite4_flip.png",
 	"/client/img/playerSprite5_flip.png",
-	"/client/img/playerSprite6_flip.png",
-	"/client/img/playerSprite1_flip.png",
+	"/client/img/playerSprite6_flip.png"
 ];
 
 
