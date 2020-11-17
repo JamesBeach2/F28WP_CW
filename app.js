@@ -49,8 +49,9 @@ var Player = function(id){
 		//accel:0.5,
 		width: 80,
 		height: 44,
-		//sprite_idx: Math.floor(Math.random() * 5),
-		sprite: sprite_list[Math.floor(Math.random() * 5)]
+		sprite_idx: 0,
+		sprite_idx_flip: 0,
+		sprite: sprite_list[0]
 	};
 	
 	// player movement function
@@ -75,6 +76,14 @@ var Player = function(id){
 			self.y += yDistance * self.maxspd;
 		}
 
+		if (self.mouseX < self.x){
+			self.sprite = sprite_list[self.sprite_idx_flip];
+		}
+
+		else if(self.x < self.mouseX){
+			self.sprite = sprite_list[self.sprite_idx];
+		}
+
 		self.rotation = Math.atan2(xDistance, yDistance);
 	};
 
@@ -94,7 +103,11 @@ io.sockets.on('connection', function(socket){
 	//player is added to the player list
 	var player = Player(socket.id);
 	player_list[socket.id] = player;
-	
+	player.sprite_idx = Math.floor(Math.random() * 5);
+	player.sprite_idx_flip = player.sprite_idx + 5;
+	player.sprite = sprite_list[player.sprite_idx];
+
+
 	console.log('Socket Connection');
 	
 	// player and socket info is deleted on disconnect
