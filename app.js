@@ -45,7 +45,7 @@ var Player = function(id){
 		mouseX: 0,
 		mouseY: 0,
 		//velocity: 0,
-		maxspd:0.01,
+		maxspd:0.02,
 		//accel:0.5,
 		width: 80,
 		height: 44,
