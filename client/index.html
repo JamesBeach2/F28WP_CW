@@ -32,7 +32,7 @@
 			var player = data[i];
 			img[i] = new Image();
 			img[i].src = player.player_sprite;
-
+			//track.style.transform = "rotate(45deg)";
 			// re-drawing each of the players in their new positions
 			ctx.drawImage(img[i],player.x,player.y, player.width, player.height);
 

@@ -69,7 +69,7 @@ var Player = function(id){
 		
 		// player positions only change while the mouse is further than 1 unit from the player
 		// this prevents the player from spinning around the mouse
-		if (distance > 1) {
+		if (distance > 25) {
 			// player positions are changed relative to their x-y ratio
 			// maxspd is being temporarily used as a modifier to slow the player down
 			self.x += xDistance * self.maxspd;
@@ -89,6 +89,27 @@ var Player = function(id){
 
 
 	return self;
+};
+
+function check_collisions() {
+	var player_checked_idx = player_list.length - 1;
+	
+	for(var i = 0; i < player_list.length; i++){
+		var Player = player_list[i];
+
+		for(var j = (player_list.length - player_checked_idx); j < player_list.length; j++){
+			var Player2 = player_list[j]
+			var Xdistance = Player.x - Player2.x;
+			var Ydistance = Player.y - Player2.y;
+			var distance = Math.sqrt((Xdistance * Xdistance) + (Ydistance * Ydistance));
+
+			if (distance < (Player.height/2) + (Player2.height/2)){
+				
+			}
+		}
+		player_checked_idx--;
+	}
+
 };
 
 
@@ -133,6 +154,8 @@ setInterval (function(){		// looping for every tick
 	// public player information packet
 	var pack = [];
 	
+	check_collisions();
+
 	for(var i in player_list){
 		var player = player_list[i];
 
