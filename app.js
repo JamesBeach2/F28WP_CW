@@ -91,25 +91,19 @@ var Player = function(id){
 	return self;
 };
 
-function check_collisions() {
-	var player_checked_idx = player_list.length - 1;
-	
-	for(var i = 0; i < player_list.length; i++){
+function check_collisions() {	
+	for(var i in player_list){
 		var Player = player_list[i];
+		var j_idx = i+1;
 
-		for(var j = (player_list.length - player_checked_idx); j < player_list.length; j++){
-			var Player2 = player_list[j]
-			var Xdistance = Player.x - Player2.x;
-			var Ydistance = Player.y - Player2.y;
-			var distance = Math.sqrt((Xdistance * Xdistance) + (Ydistance * Ydistance));
-
-			if (distance < (Player.height/2) + (Player2.height/2)){
-				
-			}
+		for(var j in player_list){
+			var Player2 = player_list[j];
+			if (Player.x > Player2.x && Player.x < Player2.x + Player2.width && Player.y > Player2.y && Player.y < Player2.y + Player2.width){
+				console.log("COLLISION")
+			}	
 		}
-		player_checked_idx--;
-	}
 
+	}
 };
 
 
