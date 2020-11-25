@@ -1,15 +1,16 @@
-<canvas id = "ctx" height = "1000" width = "1000" style = "border: 2px solid black"></canvas>
+<canvas id = "ctx" height = "1000" width = "2000" style = "border: 2px solid black"></canvas>
 
 <!-- Importing socket.io scripts and initialising it  -->
 <script src="/socket.io/socket.io.js"></script>
 <script>
 	var ctx = document.getElementById('ctx').getContext('2d');
 	ctx.fillStyle = "#4acdf1";
-	ctx.fillRect(0,0,1000,1000); 
+	ctx.fillRect(0,0,2000,1000); 
 	var socket = io(); 
 
 	var img = [];
-	
+	var food_img = new Image();
+	food_img.src = "/client/img/food.png";
 
 	// when the mouse moves within the boundaries of the canvas, the mouse_emit function is called
 	document.getElementById("ctx").onmousemove = function(event) {mouse_emit(event)};
@@ -25,19 +26,24 @@
 	// listener for player updates
 	socket.on('update_positions', function(data){
 		// canvas is cleared before being redrawn with new positions
-		ctx.clearRect(0,0,1000,1000);
-		ctx.fillRect(0,0,1000,1000);
+		ctx.clearRect(0,0,2000,1000);
+		ctx.fillRect(0,0,2000,1000);
 		// looping for every player contained in the packet
-		for(var i = 0; i < data.length; i++){
-			var player = data[i];
+
+		for(var i = 0; i < data.food_pack.length; i++){
+			var food = data.food_pack[i];
+
+			ctx.drawImage(food_img, food.x, food.y, food.size, food.size);
+		}
+
+		for(var i = 0; i < data.player_pack.length; i++){
+			var player = data.player_pack[i];
 			img[i] = new Image();
 			img[i].src = player.player_sprite;
 			//track.style.transform = "rotate(45deg)";
 			// re-drawing each of the players in their new positions
 			ctx.drawImage(img[i],player.x,player.y, player.width, player.height);
-
 		};
-		
 	});
 	
 

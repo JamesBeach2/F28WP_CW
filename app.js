@@ -17,6 +17,7 @@ var io = require('socket.io')(serv, {});
 // creating a list of connections
 var socket_list = {};
 var player_list = {};
+var food_list = {};
 var sprite_list = [
 	"/client/img/playerSprite1.png",
 	"/client/img/playerSprite2.png",
@@ -40,7 +41,7 @@ var sprite_list = [
 var Player = function(id){
 	var self = {
 		id: id,
-		x: Math.floor(Math.random() * 1000),
+		x: Math.floor(Math.random() * 2000),
 		y: Math.floor(Math.random() * 1000),
 		mouseX: 0,
 		mouseY: 0,
@@ -91,15 +92,65 @@ var Player = function(id){
 	return self;
 };
 
+var Food = function(id){
+	var self = {
+		id: id,
+		x: Math.floor(Math.random() * 2000),
+		y: Math.floor(Math.random() * 1000),
+		size: Math.floor((Math.random() * 20) + 5)
+	};
+	return self;
+};
+
+function add_food(limiter) {
+	if (limiter < 50){
+		var food_id = Math.random();
+		var food = new Food(food_id);
+		food_list[food_id] = food;
+	}	
+};
+
 function check_collisions() {	
 	for(var i in player_list){
 		var Player = player_list[i];
-		var j_idx = i+1;
 
 		for(var j in player_list){
 			var Player2 = player_list[j];
 			if (Player.x > Player2.x && Player.x < Player2.x + Player2.width && Player.y > Player2.y && Player.y < Player2.y + Player2.width){
-				console.log("COLLISION")
+				if (Player.height > (Player2.height * 1.3)){
+					Player.height += 1;
+					Player.width += 1;
+
+					Player2.height -= 1;
+					Player2.width -= 1;
+
+					if (Player2.height < 44){
+						delete player_list[j];
+						delete socket_list[i];
+					}
+				}
+
+				else if (Player2.height > (Player1.height * 1.3)){
+					Player2.height += 1;
+					Player2.width += 1;
+
+					Player.height -= 1;
+					Player.width -= 1;
+
+					if (Player.height < 44){
+						delete player_list[i];
+						delete socket_list[i];
+					}
+				}
+			}	
+		}
+
+		for(var f in food_list){
+			var food = food_list[f];
+			if (Player.x > food.x && Player.x < food.x + food.size && Player.y > food.y && Player.y < food.y + food.size){
+				Player.height += (food.size / 10);
+				Player.width += (food.size / 10);
+				delete food_list[f];
 			}	
 		}
 
@@ -146,9 +197,12 @@ io.sockets.on('connection', function(socket){
 
 setInterval (function(){		// looping for every tick
 	// public player information packet
-	var pack = [];
-	
+	var player_pack = [];
+	var food_pack = [];
+	var limiter = 0;
+
 	check_collisions();
+	add_food();
 
 	for(var i in player_list){
 		var player = player_list[i];
@@ -156,7 +210,7 @@ setInterval (function(){		// looping for every tick
 		// player positions are updated
 		player.update_player();
 		// new player positions are pushed into the packet
-		pack.push({
+		player_pack.push({
 			x:player.x,
 			y:player.y,
 			player_sprite:player.sprite,
@@ -165,10 +219,23 @@ setInterval (function(){		// looping for every tick
 			angle: player.rotation
 		});
 	}
+
+	for(var i in food_list){
+		var Food = food_list[i];
+		food_pack.push({
+			x: Food.x,
+			y: Food.y,
+			size: Food.size
+		});
+		limiter +=1;
+	}
+
+	add_food(limiter);
+
 	for(var i in socket_list){
 		var socket = socket_list[i];
 		// the packet is emitted to each client
-		socket.emit('update_positions', pack);
+		socket.emit('update_positions', {player_pack: player_pack, food_pack: food_pack});
 	}
 	
 // server sends and receives data at a rate of 30 frames per second	
