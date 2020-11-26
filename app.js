@@ -14,10 +14,11 @@ serv.listen(2000);
 console.log('server started');
 var io = require('socket.io')(serv, {});
 
-// creating a list of connections
+// creating a list of sockets, players and food objects
 var socket_list = {};
 var player_list = {};
 var food_list = {};
+// list of sprites
 var sprite_list = [
 	"/client/img/playerSprite1.png",
 	"/client/img/playerSprite2.png",
@@ -76,22 +77,22 @@ var Player = function(id){
 			self.x += xDistance * self.maxspd;
 			self.y += yDistance * self.maxspd;
 		}
-
-		if (self.mouseX < self.x){
+		// if the mouse position is left of the player then point the player left.
+		if (self.mouseX < (self.x + (self.width / 2))){
 			self.sprite = sprite_list[self.sprite_idx_flip];
 		}
-
-		else if(self.x < self.mouseX){
+		// if the mouse position is right of the player then point the player right
+		else if((self.x + (self.width/2)) < self.mouseX){
 			self.sprite = sprite_list[self.sprite_idx];
 		}
 
-		self.rotation = Math.atan2(xDistance, yDistance);
 	};
-
 
 	return self;
 };
 
+// food object constructor
+// holds the id, position and size of the food object
 var Food = function(id){
 	var self = {
 		id: id,
@@ -102,6 +103,8 @@ var Food = function(id){
 	return self;
 };
 
+// if there are less food objects than 50 on screen then create 1 more every frame until there is 50
+// Assigning an id to the food object then adding it to the list
 function add_food(limiter) {
 	if (limiter < 50){
 		var food_id = Math.random();
@@ -110,44 +113,61 @@ function add_food(limiter) {
 	}	
 };
 
+
+// Every tick, every players position needs to be compared to all the other players and food objects to check for collisions.
+// This function originally filtered out duplicate comparisons to lessen the server load but for some reason the for loop wasn't running
 function check_collisions() {	
 	for(var i in player_list){
+		// var player represents the player being compared to everything else
 		var Player = player_list[i];
 
 		for(var j in player_list){
+			// var player2 represents the current player in the list being compared to the first player
 			var Player2 = player_list[j];
-			if (Player.x > Player2.x && Player.x < Player2.x + Player2.width && Player.y > Player2.y && Player.y < Player2.y + Player2.width){
+			// checking if the x and y values of player1 exist within the bounds of player2
+			// the +(player.width /2) exists because the origin points of the player are not currently in the center of the image, this method is a last minute band aid for that problem.
+			if (Player.x + (Player.width /2) > Player2.x + (Player2.width /2) && Player.x + (Player.width /2) < Player2.x + (Player2.width /2) + Player2.width && Player.y + (Player.height /2) > Player2.y + (Player2.height /2) && Player.y + (Player.height /2)< Player2.y + (Player2.height /2) + Player2.width){
+				// if the height of player 1 is at least 30% larger than the height of player 2 then player1 may eat player2
 				if (Player.height > (Player2.height * 1.3)){
+					// add 1 to player 1's height and width
 					Player.height += 1;
 					Player.width += 1;
 
+					// remove 1 from player 2's height and width
 					Player2.height -= 1;
 					Player2.width -= 1;
-
+					
+					// if player2 is small enough to be killed then player1 absorbs 33% of their size and player2 is deleted
 					if (Player2.height < 44){
+						Player.height += Player2.height /3;
+						Player.width += Player.width /3;
 						delete player_list[j];
-						delete socket_list[i];
 					}
 				}
 
-				else if (Player2.height > (Player1.height * 1.3)){
+				// the same as above only with Player2 being 30% bigger than player1
+				else if (Player2.height > (Player.height * 1.3)){
 					Player2.height += 1;
 					Player2.width += 1;
 
 					Player.height -= 1;
 					Player.width -= 1;
-
+					
 					if (Player.height < 44){
+						Player2.height += Player.height /3
+						Player2.width += Player.width /3;
 						delete player_list[i];
-						delete socket_list[i];
 					}
+					
 				}
 			}	
 		}
-
+		// Player1 loops through all the items in the food list to see if they are colliding
 		for(var f in food_list){
 			var food = food_list[f];
-			if (Player.x > food.x && Player.x < food.x + food.size && Player.y > food.y && Player.y < food.y + food.size){
+			// same collision detection method as above
+			if (Player.x + (Player.width /2) > food.x + (food.size /2) && Player.x + (Player.width /2) < food.x + (food.size /2) + food.size && Player.y + (Player.height /2) > food.y + (food.size /2) && Player.y + (Player.height /2) < food.y + (food.size /2) + food.size){
+				// player gains 10% of the size of each food object
 				Player.height += (food.size / 10);
 				Player.width += (food.size / 10);
 				delete food_list[f];
@@ -169,7 +189,9 @@ io.sockets.on('connection', function(socket){
 	//player is added to the player list
 	var player = Player(socket.id);
 	player_list[socket.id] = player;
+	// player is assigned a random sprite (all right facing sprites are 1-6)
 	player.sprite_idx = Math.floor(Math.random() * 6);
+	// the flipped version of the sprite is ordered to be the original sprite + 6
 	player.sprite_idx_flip = player.sprite_idx + 6;
 	player.sprite = sprite_list[player.sprite_idx];
 
@@ -201,8 +223,8 @@ setInterval (function(){		// looping for every tick
 	var food_pack = [];
 	var limiter = 0;
 
+	// every tick check for collisions and check to make sure there is enough food on the canvas
 	check_collisions();
-	add_food();
 
 	for(var i in player_list){
 		var player = player_list[i];
@@ -215,11 +237,11 @@ setInterval (function(){		// looping for every tick
 			y:player.y,
 			player_sprite:player.sprite,
 			width: player.width,
-			height: player.height,
-			angle: player.rotation
+			height: player.height
 		});
 	}
 
+	// every food position is pushed to a packet
 	for(var i in food_list){
 		var Food = food_list[i];
 		food_pack.push({
@@ -227,9 +249,10 @@ setInterval (function(){		// looping for every tick
 			y: Food.y,
 			size: Food.size
 		});
-		limiter +=1;
+		limiter +=1; // limiter increases by 1 to find the length of the list.
 	}
 
+	// every tick the amount of food on screen is counted and amended if less than 50
 	add_food(limiter);
 
 	for(var i in socket_list){

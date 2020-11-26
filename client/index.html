@@ -4,11 +4,14 @@
 <script src="/socket.io/socket.io.js"></script>
 <script>
 	var ctx = document.getElementById('ctx').getContext('2d');
+	// making the canvas filled blue
 	ctx.fillStyle = "#4acdf1";
 	ctx.fillRect(0,0,2000,1000); 
 	var socket = io(); 
 
+	// image array for each player image
 	var img = [];
+	// food image doesnt need to be an array since its the same image
 	var food_img = new Image();
 	food_img.src = "/client/img/food.png";
 
@@ -32,7 +35,7 @@
 
 		for(var i = 0; i < data.food_pack.length; i++){
 			var food = data.food_pack[i];
-
+			// drawing each food object to the canvas
 			ctx.drawImage(food_img, food.x, food.y, food.size, food.size);
 		}
 
